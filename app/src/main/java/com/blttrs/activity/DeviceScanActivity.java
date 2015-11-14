@@ -54,7 +54,6 @@ public class DeviceScanActivity extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter;
     private DeviceListAdapter mDeviceListAdapter;
     private String mDeviceAddress;
-    private BluetoothDevice mDevice;
 
     private ListView listview_device;
     private Button btn_scan;
@@ -65,6 +64,8 @@ public class DeviceScanActivity extends AppCompatActivity {
     public static final int SCAN_PERIOD = 60000;//扫描的时间
     private static final int REQUEST_CODE_BLUETOOTH = 1;
     private Handler mHandler1;
+    private Intent intent = null;
+    private BluetoothDevice mDevice;
 
     private TimerTask mTask1;
     private Timer mTimer1;
@@ -82,24 +83,22 @@ public class DeviceScanActivity extends AppCompatActivity {
                     if (str == null) {
                         str = "未知设备";
                     }
-//                    startActivity(intent);
+                    startActivity(intent);
                     break;
-
                 case 2:
 //                    String str2 = md.getName();
-//                    if (str2 == null) {
-//                        str2 = "未知设备";
-//                    }
-
+                    String str2 = mDevice.getName();
+                    if (str2 == null) {
+                        str2 = "未知设备";
+                    }
                     mBluetoothLeService.connect(mDeviceAddress);
 //					devicename.setText("连接失败,请等待重新连接");
                     break;
-
                 case 3:
                     if (isBTConnected) {
 //					devicename.setText("重连成功");
 
-//                        startActivity(intent);
+                        startActivity(intent);
                     }else {
 //						devicename.setText("重连失败，请点击重试");
                     }
@@ -108,7 +107,6 @@ public class DeviceScanActivity extends AppCompatActivity {
             super.handleMessage(msg);
         }
     };
-
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -339,7 +337,7 @@ public class DeviceScanActivity extends AppCompatActivity {
 
                 mBluetoothLeService.connect(mDeviceAddress);
 
-                final Intent intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
+                intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
                 intent.putExtra(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
                 intent.putExtra(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
 
