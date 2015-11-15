@@ -34,12 +34,6 @@
             </intent-filter>
         </activity>
 
-        <receive
-            android:name=".broadcast.GattUpdateReceiver"
-            android:enabled="true"
-            android:exported="true" >
-        </receive>
-
         <activity
             android:name=".activity.BTTrsActivity"
             android:label="@string/title_activity_bttrs"
@@ -49,5 +43,4 @@
         <service
             android:name=".service.BluetoothLeService"/>
     </application>
-
 </manifest>

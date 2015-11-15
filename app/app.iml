@@ -93,9 +93,16 @@
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="recyclerview-v7-23.1.0" level="project" />
+    <orderEntry type="library" exported="" name="slf4j-api-1.7.5" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.1.0" level="project" />
+    <orderEntry type="library" exported="" name="dialog-8.0.4" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.0" level="project" />
+    <orderEntry type="library" exported="" name="core-8.0.4" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.0" level="project" />
+    <orderEntry type="library" exported="" name="api-8.0.4" level="project" />
+    <orderEntry type="library" exported="" name="javassist-3.18.2-GA" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.1.0" level="project" />
+    <orderEntry type="library" exported="" name="processor-8.0.4" level="project" />
+    <orderEntry type="library" exported="" name="modular-8.0.4" level="project" />
   </component>
 </module>

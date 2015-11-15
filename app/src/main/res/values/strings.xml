@@ -27,4 +27,10 @@
     <string name="title_activity_bttrs">BTTrsActivity</string>
 
     <string name="connected_failed">Connected failed</string>
+
+    <string name="scan_data_empty">未搜索到相关蓝牙设备</string>
+    <string name="message_dialog">提示</string>
+    <string name="reconnect">连接设备失败,是否重试?</string>
+    <string name="message_ok">OK</string>
+    <string name="message_cancel">CANCEL</string>
 </resources>

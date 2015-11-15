@@ -1,21 +1,20 @@
 package com.blttrs.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -23,31 +22,35 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blttrs.BltTsConstants;
-import com.blttrs.MainActivity;
 import com.blttrs.R;
 import com.blttrs.adapter.DeviceListAdapter;
 import com.blttrs.broadcast.GattUpdateReceiver;
 import com.blttrs.service.BluetoothLeService;
 import com.blttrs.utils.ToastUtils;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 /**
  * scan the device and list the device to the device list
  */
-public class DeviceScanActivity extends AppCompatActivity {
+public class DeviceScanActivity extends Activity {
 
     public static final String TAG = "DeviceScanActivity";
     private boolean isBTConnected = false;// 蓝牙是否连接
+    private static final String SPP_UUID = "0000111f-0000-1000-8000-00805f9b34fb";
+//    private static final String SPP_UUID =   "00001101-0000-1000-8000-00805F9B34FB";
+    private static final int CONNECT_SUCCESS = 1;
+    private static final int CONNECT_FAILED = 2;
+    private static final int CONNECT_RECONNECT = 3;
 
     private BluetoothLeService mBluetoothLeService;
     private GattUpdateReceiver mGattUpdateReceiver;
@@ -61,11 +64,15 @@ public class DeviceScanActivity extends AppCompatActivity {
     private List<BluetoothDevice> mBluetoothDevices;
 
     private boolean mScanning = false;
-    public static final int SCAN_PERIOD = 60000;//扫描的时间
+    public static final int SCAN_PERIOD = 20000;//扫描的时间
     private static final int REQUEST_CODE_BLUETOOTH = 1;
     private Handler mHandler1;
     private Intent intent = null;
     private BluetoothDevice mDevice;
+    private BluetoothSocket mBluetoothSocket;
+
+    private ProgressDialog progressDialog;
+//    private MaterialDialog mMaterialDialog;
 
     private TimerTask mTask1;
     private Timer mTimer1;
@@ -74,15 +81,17 @@ public class DeviceScanActivity extends AppCompatActivity {
     private TimerTask mTask3;
     private Timer mTimer3;
 
-    private Handler mHandler2 = new Handler(){
+    private Handler mConnectResult = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            Log.i(TAG, " connected reuslt : " +  msg.what + "");
             switch (msg.what){
                 case 1:
                     String str = mDevice.getName();
                     if (str == null) {
                         str = "未知设备";
                     }
+                    Log.i(TAG, " 连接成功 ");
                     startActivity(intent);
                     break;
                 case 2:
@@ -91,13 +100,13 @@ public class DeviceScanActivity extends AppCompatActivity {
                     if (str2 == null) {
                         str2 = "未知设备";
                     }
-                    mBluetoothLeService.connect(mDeviceAddress);
+                    Log.i(TAG, " 连接失败 ");
+//                    mBluetoothLeService.connect(mDeviceAddress);
 //					devicename.setText("连接失败,请等待重新连接");
                     break;
                 case 3:
                     if (isBTConnected) {
 //					devicename.setText("重连成功");
-
                         startActivity(intent);
                     }else {
 //						devicename.setText("重连失败，请点击重试");
@@ -130,10 +139,7 @@ public class DeviceScanActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             ToastUtils.showShort(this, R.string.ble_not_supported);
             finish();
@@ -157,26 +163,9 @@ public class DeviceScanActivity extends AppCompatActivity {
 
         initView();
 
-        Log.i(TAG, " onCreate ");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        Log.i(TAG, " onResume ");
-
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!mBluetoothAdapter.isEnabled()) {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_CODE_BLUETOOTH);
-            }
-        }
-
         // Initializes list view adapter.
         mBluetoothDevices = new ArrayList<>();
+        mBluetoothDevices.clear();
         mDeviceListAdapter = new DeviceListAdapter(DeviceScanActivity.this, mBluetoothDevices);
         Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
         if(bondedDevices.size() > 0){
@@ -190,6 +179,23 @@ public class DeviceScanActivity extends AppCompatActivity {
         mGattUpdateReceiver = new GattUpdateReceiver(mDeviceListAdapter);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
+        Log.i(TAG, " onCreate ");
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Log.i(TAG, " onResume ");
+        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
+        // fire an intent to display a dialog asking the user to grant permission to enable it.
+        if (!mBluetoothAdapter.isEnabled()) {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_CODE_BLUETOOTH);
+            }
+        }
     }
 
     @Override
@@ -203,13 +209,6 @@ public class DeviceScanActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        scanDevice(false);
-//        mDeviceListAdapter.clear();
-//    }
-
     /**
      * 扫描周围设备
      * @param enabled 是否扫描
@@ -221,34 +220,49 @@ public class DeviceScanActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     if (mScanning) {
-                        //10 sec
                         mScanning = false;
                         mBluetoothAdapter.stopLeScan(mScanCallback);
-                        if(mBluetoothAdapter.isDiscovering()){
+                        if (mBluetoothAdapter.isDiscovering()) {
                             mBluetoothAdapter.cancelDiscovery();
                         }
 //                		invalidateOptionsMenu();
                         btn_scan.setText("Scan");
+                        if (progressDialog.isShowing()) {
+                            progressDialog.cancel();
+                            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
+                        }
+
+                        if(mBluetoothDevices.size() == 0){
+                            ToastUtils.showLong(DeviceScanActivity.this, R.string.scan_data_empty);
+                        }
                     }
                 }
             }, SCAN_PERIOD);
             btn_scan.setText("Scaning");
             mScanning = true;
-            //F000E0FF-0451-4000-B000-000000000000
-//            mBluetoothAdapter.startLeScan(mScanCallback);
-            //搜索周围的蓝牙设备
             if(mBluetoothAdapter.isDiscovering()){
                 mBluetoothAdapter.cancelDiscovery();
             }
             mBluetoothAdapter.startDiscovery();
+
+            if(progressDialog == null){
+                progressDialog = new ProgressDialog(DeviceScanActivity.this);
+                progressDialog.setMessage("正在搜索...");
+            }
+            progressDialog.show();
+            btn_scan.setBackgroundResource(R.mipmap.btn_pre);
+
             Log.i(TAG, " scanLeDevice ");
         } else {
-            //停止
             btn_scan.setText("Scan");
             mScanning = false;
 //            mBluetoothAdapter.stopLeScan(mScanCallback);
             if(mBluetoothAdapter.isDiscovering()){
                 mBluetoothAdapter.cancelDiscovery();
+            }
+            if(progressDialog.isShowing()){
+                progressDialog.cancel();
+                btn_scan.setBackgroundResource(R.mipmap.btn_lock);
             }
         }
 //        invalidateOptionsMenu();
@@ -273,6 +287,9 @@ public class DeviceScanActivity extends AppCompatActivity {
     private IntentFilter makeGattUpdateIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);//
+        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 //        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
 //        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
@@ -303,101 +320,86 @@ public class DeviceScanActivity extends AppCompatActivity {
                 mDevice = mDeviceListAdapter.getDevice(position);
                 if (mDevice == null) return;
 
-//                if (mServiceConnection == null) {
-//                    Intent gattServiceIntent = new Intent(DeviceScanActivity.this, BluetoothLeService.class);
-//                    Log.i(TAG, "Try to bindService=" + bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE));
-//                    registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-//                }
-
                 mDeviceAddress = mDevice.getAddress();
-                Log.i(TAG, "service"+mBluetoothLeService);
+                Log.i(TAG, "service" + mBluetoothLeService);
 
-                //先判断是否配对
-//                int status = mDevice.getBondState();
-//                switch (status){
-//                    case BluetoothDevice.BOND_NONE:
-//                        try {
-//                            Method bondMethod = BluetoothDevice.class.getMethod("createBond");
-//                            bondMethod.invoke(mDevice);
-//                        } catch (NoSuchMethodException e) {
-//                            e.printStackTrace();
-//                        } catch (InvocationTargetException e) {
-//                            e.printStackTrace();
-//                        } catch (IllegalAccessException e) {
-//                            e.printStackTrace();
-//                        }
-//                        break;
-//                    case BluetoothDevice.BOND_BONDING:
-//
-//                        break;
-//                    case BluetoothDevice.BOND_BONDED:
-//                        mBluetoothLeService.connect(mDeviceAddress);
-//                        break;
-//                }
-
-                mBluetoothLeService.connect(mDeviceAddress);
-
-                intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
-                intent.putExtra(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
-                intent.putExtra(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
+                //如果正在搜索 则取消搜索
+                if (mBluetoothAdapter.isDiscovering()) {
+                    mBluetoothAdapter.cancelDiscovery();
+                }
 
                 if (mScanning) {
-                    mBluetoothAdapter.stopLeScan(mScanCallback);
-                    mScanning = false;
+                    scanDevice(false);
                 }
 
-                if (mDeviceAddress == null || mDeviceAddress == "" ) {
-                    ToastUtils.showShort(DeviceScanActivity.this, R.string.connected_failed);
-                    return;
+                try {
+                    if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {//未配对
+                        Method createBondMethod = BluetoothDevice.class
+                                .getMethod("createBond");
+                        Log.i(TAG, "开始配对");
+                        createBondMethod.invoke(mDevice);
+                    } else if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                        connect(mDevice);//连接蓝牙
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                //计时器任务1
-                mTask1 = new TimerTask() {
-                    @Override
-                    public void run() {
-                        Message message = new Message();
-                        message.what = 2;
-                        mHandler2.sendMessage(message);
-                    }
-                };
-
-                //计时器任务2
-                mTask2 = new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (isBTConnected) {
-                            Message message = new Message();
-                            message.what = 1;
-                            mHandler2.sendMessage(message);
-                        }else {
-                            mTimer1 = new Timer();
-                            mTimer1.schedule(mTask1, 1000);
-                            mTimer3 = new Timer();
-                            mTimer3.schedule(mTask3, 2000);
-                        }
-                    }
-                };
-
-                //800ms
-                mTimer2 = new Timer();
-                mTimer2.schedule(mTask2, 800);
-
-                mTask3 = new TimerTask() {
-                    @Override
-                    public void run() {
-                        Message message = new Message();
-                        message.what = 3;
-                        mHandler2.sendMessage(message);
-                    }
-                };
+                //mBluetoothLeService.connect(mDeviceAddress);
             }
         });
-
-
 
         TextView textView = new TextView(this);
         textView.setText(" Please press the scan button to scan the device ");
         listview_device.setEmptyView(textView);
+    }
+
+    private Handler result = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int what = msg.what;
+            BluetoothDevice dev = msg.getData().getParcelable("device");
+            switch(what){
+                case CONNECT_SUCCESS:
+                    ToastUtils.showShort(DeviceScanActivity.this, "连接成功");
+                    intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
+                    intent.putExtra(BltTsConstants.EXTRAS_DEVICE_NAME, dev.getName());
+                    intent.putExtra(BltTsConstants.EXTRAS_DEVICE_ADDRESS, dev.getAddress());
+                    startActivity(intent);
+                    break;
+                case CONNECT_FAILED:
+                    ToastUtils.showShort(DeviceScanActivity.this, "连接失败");
+                    showDialog();
+                    break;
+            }
+        }
+    };
+
+    private void connect(BluetoothDevice device) {
+        UUID uuid = UUID.fromString(SPP_UUID);
+        Message message = mConnectResult.obtainMessage();
+        try {
+            mBluetoothSocket = device.createRfcommSocketToServiceRecord(uuid);
+            Log.i(TAG, " 开始连接... ");
+            mBluetoothSocket.connect();
+            isBTConnected = true;
+            message.what = CONNECT_SUCCESS;
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i(TAG, e.getMessage());
+            try {
+                isBTConnected = false;
+                message.what = CONNECT_FAILED;
+                mBluetoothSocket.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("device", device);
+        message.setData(bundle);
+        result.sendMessage(message);
     }
 
     // Device scan callback.
@@ -414,5 +416,26 @@ public class DeviceScanActivity extends AppCompatActivity {
                     });
                 }
             };
+
+    private void showDialog(){
+//        if(mMaterialDialog == null){
+//            mMaterialDialog = new MaterialDialog(this)
+//                    .setTitle(R.string.message_dialog)
+//                    .setMessage(R.string.reconnect)
+//                    .setPositiveButton(R.string.message_ok, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            mMaterialDialog.dismiss();
+//                        }
+//                    })
+//                    .setNegativeButton(R.string.message_cancel, new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            mMaterialDialog.dismiss();
+//                        }
+//                    });
+//        }
+//        mMaterialDialog.show();
+    }
 
 }
