@@ -25,5 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.github.michael-rapp:android-material-dialog:3.0.0'
+    compile 'me.drakeet.materialdialog:library:1.2.2'
 }

@@ -33,4 +33,7 @@
     <string name="reconnect">连接设备失败,是否重试?</string>
     <string name="message_ok">OK</string>
     <string name="message_cancel">CANCEL</string>
+    <string name="bond_none">未配对</string>
+    <string name="bond_bonding">正在配对</string>
+    <string name="bond_bonded">已配对</string>
 </resources>

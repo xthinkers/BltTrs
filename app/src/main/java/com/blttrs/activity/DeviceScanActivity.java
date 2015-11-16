@@ -72,7 +72,7 @@ public class DeviceScanActivity extends Activity {
     private BluetoothSocket mBluetoothSocket;
 
     private ProgressDialog progressDialog;
-//    private MaterialDialog mMaterialDialog;
+    private MaterialDialog mMaterialDialog;
 
     private TimerTask mTask1;
     private Timer mTimer1;
@@ -369,7 +369,7 @@ public class DeviceScanActivity extends Activity {
                     break;
                 case CONNECT_FAILED:
                     ToastUtils.showShort(DeviceScanActivity.this, "连接失败");
-                    showDialog();
+                    showDialog(dev);
                     break;
             }
         }
@@ -417,25 +417,25 @@ public class DeviceScanActivity extends Activity {
                 }
             };
 
-    private void showDialog(){
-//        if(mMaterialDialog == null){
-//            mMaterialDialog = new MaterialDialog(this)
-//                    .setTitle(R.string.message_dialog)
-//                    .setMessage(R.string.reconnect)
-//                    .setPositiveButton(R.string.message_ok, new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            mMaterialDialog.dismiss();
-//                        }
-//                    })
-//                    .setNegativeButton(R.string.message_cancel, new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            mMaterialDialog.dismiss();
-//                        }
-//                    });
-//        }
-//        mMaterialDialog.show();
+    private void showDialog(BluetoothDevice dev){
+        if(mMaterialDialog == null){
+            mMaterialDialog = new MaterialDialog(this)
+                    .setTitle(R.string.message_dialog)
+                    .setMessage(R.string.reconnect)
+                    .setPositiveButton(R.string.message_ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            connect(dev);
+                            mMaterialDialog.dismiss();
+                        }
+                    })
+                    .setNegativeButton(R.string.message_cancel, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mMaterialDialog.dismiss();
+                        }
+                    });
+        }
+        mMaterialDialog.show();
     }
-
 }

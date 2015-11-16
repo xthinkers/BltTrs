@@ -31,6 +31,14 @@ public class DeviceListAdapter extends BaseAdapter {
         bRecord = new ArrayList<>();
     }
 
+    public void setBondStatus(BluetoothDevice dev){
+        int position = deviceList.indexOf(dev);
+    }
+
+    public boolean contains(BluetoothDevice device){
+        return deviceList.contains(device) ? true : false;
+    }
+
     @Override
     public int getCount() {
         return deviceList.size() == 0 ? 0 :  deviceList.size();
@@ -77,6 +85,8 @@ public class DeviceListAdapter extends BaseAdapter {
             convertView = mInflator.inflate(R.layout.listitem_device, null);
             holder.deviceName = ((TextView) convertView.findViewById(R.id.device_name));
             holder.deviceAddress = ((TextView) convertView.findViewById(R.id.device_address));
+            holder.deviceBondStatus = ((TextView) convertView.findViewById(R.id.tv_status));
+
             convertView.setTag(holder);
         }else {
             holder = (DeviceInfoHolder) convertView.getTag();
@@ -89,15 +99,28 @@ public class DeviceListAdapter extends BaseAdapter {
         } else {
             holder.deviceName.setText(R.string.unknown_device);
         }
+
 //        holder.deviceAddress.setText(
 //                deviceInfo.getAddress() + "  RSSI:" + String.valueOf(rssis.get(position)));
         holder.deviceAddress.setText(deviceInfo.getAddress());
-
+        int bondStatus = deviceInfo.getBondState();
+        switch(bondStatus){
+            case BluetoothDevice.BOND_BONDED:
+                holder.deviceBondStatus.setText(R.string.bond_bonded);
+                break;
+            case BluetoothDevice.BOND_BONDING:
+                holder.deviceBondStatus.setText(R.string.bond_bonding);
+                break;
+            case BluetoothDevice.BOND_NONE:
+                holder.deviceBondStatus.setText(R.string.bond_none);
+                break;
+        }
         return convertView;
     }
 
     static class DeviceInfoHolder {
         TextView deviceName;
         TextView deviceAddress;
+        TextView deviceBondStatus;
     }
 }
