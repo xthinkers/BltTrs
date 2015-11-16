@@ -16,16 +16,19 @@
         android:gravity="center"
         android:orientation="horizontal">
         <TextView
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="1路开关:"/>
-        <ImageButton
+        <ToggleButton
             android:id="@+id/ig1_on_off"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@null"
+            android:textOff=""
+            android:textOn=""
             android:background="@drawable/bg_on_off"/>
     </LinearLayout>
 
@@ -35,16 +38,19 @@
         android:gravity="center"
         android:orientation="horizontal">
         <TextView
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="2路开关"/>
-        <ImageButton
+        <ToggleButton
             android:id="@+id/ig2_on_off"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@null"
+            android:textOff=""
+            android:textOn=""
             android:background="@drawable/bg_on_off"/>
     </LinearLayout>
 

@@ -47,14 +47,16 @@ public class GattUpdateReceiver extends BroadcastReceiver {
             switch(state){
                 case BluetoothDevice.BOND_BONDING://正在配对
                     Log.i(TAG, " 正在配对 ");
+                    mDeviceListAdapter.notifyDataSetChanged();
                     break;
                 case BluetoothDevice.BOND_BONDED://完成配对
                     Log.i(TAG, " 完成配对 ");
+                    mDeviceListAdapter.notifyDataSetChanged();
                     ToastUtils.showShort(context, "配对成功");
-                    
                     break;
                 case BluetoothDevice.BOND_NONE://取消配对
                     Log.i(TAG, " 取消配对 ");
+                    mDeviceListAdapter.notifyDataSetChanged();
                     ToastUtils.showShort(context, "取消配对");
                     break;
             }

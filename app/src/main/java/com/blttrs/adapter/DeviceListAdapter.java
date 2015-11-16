@@ -31,8 +31,8 @@ public class DeviceListAdapter extends BaseAdapter {
         bRecord = new ArrayList<>();
     }
 
-    public void setBondStatus(BluetoothDevice dev){
-        int position = deviceList.indexOf(dev);
+    public void setBondStatus(BluetoothDevice dev,int status){
+
     }
 
     public boolean contains(BluetoothDevice device){
