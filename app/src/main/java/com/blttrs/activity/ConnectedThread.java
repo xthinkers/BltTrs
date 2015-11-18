@@ -1,6 +1,11 @@
 package com.blttrs.activity;
 
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
+import com.blttrs.BltTsConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,12 +15,17 @@ import java.io.OutputStream;
  * Created by hongweiyu on 15/11/16.
  */
 public class ConnectedThread extends Thread {
+
+    private static final String TAG = "ConnectedThread";
+
     private final BluetoothSocket mSocket;
     private final InputStream mInStream;
     private final OutputStream mOutStream;
+    private Handler mHandler;
 
-    public ConnectedThread(BluetoothSocket socket) {
+    public ConnectedThread(BluetoothSocket socket,Handler handler) {
         mSocket = socket;
+        this.mHandler = handler;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
@@ -32,17 +42,14 @@ public class ConnectedThread extends Thread {
     public void run() {
         byte[] buffer = new byte[1024];  // buffer store for the stream
         int bytes; // bytes returned from read()
-
         // Keep listening to the InputStream until an exception occurs
         while (true) {
             try {
                 // Read from the InputStream
                 bytes = mInStream.read(buffer);
                 // Send the obtained bytes to the UI activity
-
-//                mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-//                        .sendToTarget();
-
+                mHandler.obtainMessage(BltTsConstants.MESSAGE_READ, bytes, -1, buffer)
+                        .sendToTarget();
             } catch (IOException e) {
                 break;
             }

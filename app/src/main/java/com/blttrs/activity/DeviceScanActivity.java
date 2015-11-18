@@ -1,6 +1,7 @@
 package com.blttrs.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -15,9 +16,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -49,12 +53,6 @@ public class DeviceScanActivity extends Activity {
 
     public static final String TAG = "DeviceScanActivity";
     private boolean isBTConnected = false;// 蓝牙是否连接
-    private static final String SPP_UUID = "0000111f-0000-1000-8000-00805f9b34fb";
-//    private static final String SPP_UUID =   "00001101-0000-1000-8000-00805F9B34FB";
-    private static final int CONNECT_SUCCESS = 1;
-    private static final int CONNECT_FAILED = 2;
-    private static final int CONNECT_RECONNECT = 3;
-
     private BluetoothLeService mBluetoothLeService;
     private GattUpdateReceiver mGattUpdateReceiver;
     private BluetoothAdapter mBluetoothAdapter;
@@ -143,6 +141,7 @@ public class DeviceScanActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
             ToastUtils.showShort(this, R.string.ble_not_supported);
             finish();
@@ -199,6 +198,12 @@ public class DeviceScanActivity extends Activity {
                 startActivityForResult(enableBtIntent, REQUEST_CODE_BLUETOOTH);
             }
         }
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED);
+
+        btn_scan.requestFocus();
+        btn_scan.setFocusable(true);
     }
 
     @Override
@@ -366,33 +371,38 @@ public class DeviceScanActivity extends Activity {
         }
     }
 
-    private Handler result = new Handler(){
+    private Handler mResultHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             int what = msg.what;
-            BluetoothDevice dev = msg.getData().getParcelable("device");
+            if(progressDialog.isShowing()){
+                progressDialog.cancel();
+            }
             switch(what){
-                case CONNECT_SUCCESS:
+                case BltTsConstants.CONNECT_SUCCESS:
                     intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
-                    intent.putExtra(BltTsConstants.EXTRAS_DEVICE_NAME, dev.getName());
-                    intent.putExtra(BltTsConstants.EXTRAS_DEVICE_ADDRESS, dev.getAddress());
+                    Bundle bundle = new Bundle();
+                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
+                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
+                    intent.putExtras(bundle);
                     startActivity(intent);
                     break;
-                case CONNECT_FAILED:
-                    ToastUtils.showShort(DeviceScanActivity.this, "连接失败");
-                    showDialog(dev);
+                case BltTsConstants.CONNECT_FAILED:
+//                    ToastUtils.showShort(DeviceScanActivity.this, "连接失败");
+                    showDialog(mDevice);
                     break;
             }
         }
     };
 
     private void connect(BluetoothDevice device) {
-        new ConnectThread(device, mBluetoothAdapter).start();
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("device", device);
-//        message.setData(bundle);
-//        result.sendMessage(message);
+        if(progressDialog == null){
+            progressDialog = new ProgressDialog(this);
+        }
+        progressDialog.setMessage("正在连接");
+        progressDialog.show();
+        new ConnectThread(device, mBluetoothAdapter,mResultHandler).start();
     }
 
     // Device scan callback.

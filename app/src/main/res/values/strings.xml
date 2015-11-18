@@ -36,4 +36,10 @@
     <string name="bond_none">未配对</string>
     <string name="bond_bonding">正在配对</string>
     <string name="bond_bonded">已配对</string>
+    <string name="title_activity_set_pwd">SetPwdActivity</string>
+    <string name="set_pasword">设置密码</string>
+    <string name="pwd_must_not_null">密码不能为空</string>
+    <string name="title_activity_set_name">SetNameActivity</string>
+    <string name="name_not_null">名称不能为空</string>
+
 </resources>

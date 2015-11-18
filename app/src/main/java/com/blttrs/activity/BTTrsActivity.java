@@ -1,7 +1,9 @@
 package com.blttrs.activity;
 
+import android.app.Dialog;
 import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -9,12 +11,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.blttrs.BltTsConstants;
 import com.blttrs.R;
+import com.blttrs.activity.dialog.SetNameActivity;
+import com.blttrs.activity.dialog.SetPwdActivity;
 import com.blttrs.service.BluetoothLeService;
 
 public class BTTrsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -26,6 +30,8 @@ public class BTTrsActivity extends AppCompatActivity implements View.OnClickList
     private Button btn_set_pwd, btn_set_new_pwd, btn_change_name;//设置秘密 设置新秘密 修改名称
     private BluetoothSocket mSocket;//通信套接字
     private BluetoothLeService mBluetoothLeService;
+    private String mDeviceName;
+    private String mDeviceAddress;
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
             @Override
@@ -40,11 +46,19 @@ public class BTTrsActivity extends AppCompatActivity implements View.OnClickList
             }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bttrs);
+
+        Bundle bundle = getIntent().getExtras();
+        if(bundle != null && bundle.containsKey(BltTsConstants.EXTRAS_DEVICE_NAME)){
+            mDeviceName = bundle.getString(BltTsConstants.EXTRAS_DEVICE_NAME);
+        }
+        if(bundle != null && bundle.containsKey(BltTsConstants.EXTRAS_DEVICE_ADDRESS)){
+            mDeviceAddress = bundle.getString(BltTsConstants.EXTRAS_DEVICE_ADDRESS);
+        }
+
         initView();
     }
 
@@ -83,18 +97,18 @@ public class BTTrsActivity extends AppCompatActivity implements View.OnClickList
             case R.id.ig1_on_off:
                 ToggleButton button_off = ((ToggleButton) v);
                 boolean check_off = button_off.isChecked();
-
                 break;
             case R.id.ig2_on_off:
                 ToggleButton button_on = ((ToggleButton) v);
                 boolean check_on = button_on.isChecked();
-
                 break;
             case R.id.btn_set_pwd:
+                startActivity(new Intent(this, SetPwdActivity.class));
                 break;
             case R.id.btn_set_new_pwd:
                 break;
             case R.id.btn_change_name:
+                startActivity(new Intent(this, SetNameActivity.class));
                 break;
         }
     }

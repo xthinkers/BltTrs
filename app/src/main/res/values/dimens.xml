@@ -13,5 +13,6 @@
     <dimen name="activity_login_down_tablerow_magin_bottom">10dp</dimen>
     <dimen name="activity_login_imagebutton_top_bottom">10dp</dimen>
     <dimen name="activity_login_imagebutton_left">10dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>
