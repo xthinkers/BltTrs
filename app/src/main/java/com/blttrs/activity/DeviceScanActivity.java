@@ -381,7 +381,7 @@ public class DeviceScanActivity extends Activity {
             }
             switch(what){
                 case BltTsConstants.CONNECT_SUCCESS:
-                    intent = new Intent(DeviceScanActivity.this, BTTrsActivity.class);
+                    intent = new Intent(DeviceScanActivity.this, OwnerInfoActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
                     bundle.putString(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());

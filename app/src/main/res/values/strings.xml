@@ -41,5 +41,7 @@
     <string name="pwd_must_not_null">密码不能为空</string>
     <string name="title_activity_set_name">SetNameActivity</string>
     <string name="name_not_null">名称不能为空</string>
+    <string name="title_activity_owner_info">OwnerInfoActivity</string>
+    <string name="title_owner_info">业主信息</string>
 
 </resources>
