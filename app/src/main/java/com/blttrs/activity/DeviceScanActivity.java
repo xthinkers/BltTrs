@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
@@ -26,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blttrs.BltTsConstants;
 import com.blttrs.R;
@@ -73,7 +75,9 @@ public class DeviceScanActivity extends Activity {
     private BluetoothSocket mBluetoothSocket;
 
     private ProgressDialog progressDialog;
-    private MaterialDialog mMaterialDialog;
+    private AlertDialog.Builder mAlertDialog;
+
+    private static boolean isEnable = true;
 
     private TimerTask mTask1;
     private Timer mTimer1;
@@ -315,7 +319,7 @@ public class DeviceScanActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO: 15/11/11
-                if(!mScanning){
+                if (!mScanning) {
                     scanDevice(true);
                 }
             }
@@ -324,6 +328,12 @@ public class DeviceScanActivity extends Activity {
         listview_device.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if(!isEnable){
+                    return;
+                }
+                isEnable = false;
+
                 // TODO: 15/11/11
                 mDevice = mDeviceListAdapter.getDevice(position);
                 if (mDevice == null) return;
@@ -353,11 +363,11 @@ public class DeviceScanActivity extends Activity {
                 } else {
                     connect(mDevice);
                 }
+
 //                result.postDelayed(new ConnectThread(mDevice, mBluetoothAdapter), 1000);
 //                mBluetoothLeService.connect(mDeviceAddress);
             }
         });
-
         TextView textView = new TextView(this);
         textView.setText(" Please press the scan button to scan the device ");
         listview_device.setEmptyView(textView);
@@ -375,12 +385,16 @@ public class DeviceScanActivity extends Activity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
+            isEnable = true;
+
             int what = msg.what;
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
             }
             switch(what){
                 case BltTsConstants.CONNECT_SUCCESS:
+//                    ToastUtils.showShort(DeviceScanActivity.this, "连接成功");
                     intent = new Intent(DeviceScanActivity.this, OwnerInfoActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
@@ -421,24 +435,24 @@ public class DeviceScanActivity extends Activity {
             };
 
     private void showDialog(final BluetoothDevice dev){
-        if(mMaterialDialog == null){
-            mMaterialDialog = new MaterialDialog(this)
-                    .setTitle(R.string.message_dialog)
-                    .setMessage(R.string.reconnect)
-                    .setPositiveButton(R.string.message_ok, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            connect(dev);
-                            mMaterialDialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton(R.string.message_cancel, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mMaterialDialog.dismiss();
-                        }
-                    });
+        if(mAlertDialog == null){
+            mAlertDialog = new AlertDialog.Builder(this);
+            mAlertDialog.setTitle(R.string.message_dialog);
+            mAlertDialog.setMessage(R.string.reconnect);
+            mAlertDialog.setPositiveButton(R.string.message_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    connect(dev);
+                    dialog.dismiss();
+                }
+            });
+            mAlertDialog.setNegativeButton(R.string.message_cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
         }
-        mMaterialDialog.show();
+        mAlertDialog.show();
     }
 }
