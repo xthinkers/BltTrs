@@ -18,5 +18,7 @@
     <color name="colorAccent">#08AAE6</color>
     <color name="colorPrimaryDark">#08AAE6</color>
     <color name="colorPrimary">#08AAE6</color>
+    <color name="color_orange">#99991199</color>
+    <color name="color_green">#00A600</color>
 
 </resources>

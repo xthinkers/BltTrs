@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
 import android.provider.Contacts;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.blttrs.R;
 import com.blttrs.utils.ToastUtils;
+import com.blttrs.widget.HeaderView;
 
 import java.io.File;
 
@@ -27,6 +29,8 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
     private static final String TAG = "OwnerInfoActivity";
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 100;
+
+    private HeaderView mHearder;
 
     private TextView mTvPhoneRecode1;
     private TextView mTvPhoneRecode2;
@@ -59,7 +63,7 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
             if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
                 String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                 Log.i(TAG, "call out:" + phoneNumber);
-                Intent phoneIntent = new Intent(OwnerInfoActivity.this, BTTrsActivity.class);
+                Intent phoneIntent = new Intent(OwnerInfoActivity.this, InputPwdActivity.class);
                 phoneIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(phoneIntent);
             }
@@ -81,6 +85,10 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initView() {
+
+        mHearder = ((HeaderView) findViewById(R.id.header_ownerinfo));
+        mHearder.setVisibility(HeaderView.HeadCompat.BACK, false);
+
         mImgAvatar = ((ImageView) findViewById(R.id.img_avatar));
 
         mTvPhoneRecode1 = ((TextView) findViewById(R.id.tv_phone1));
@@ -114,26 +122,28 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         int id = v.getId();
         String phoneNumber = "";
+        Intent intentPhone = null;
         switch (id) {
             case R.id.img_contacts_one:
                 //拨打电话
                 phoneNumber = "17095656131";
-                Intent intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+                intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
                 startActivity(intentPhone);
                 break;
             case R.id.img_contacts_two:
-                //跳转到联系人界面
+                //拨打电话
                 phoneNumber = "18254863495";
+                intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+                startActivity(intentPhone);
                 break;
             case R.id.img_contacts_three:
-                //跳转到联系人界面
+                //拨打电话
                 phoneNumber = "18353123125";
-                Intent contactsIntent = new Intent();
-                contactsIntent.setAction(Intent.ACTION_PICK);
-                contactsIntent.setData(Contacts.People.CONTENT_URI);
-                startActivity(contactsIntent);
+                intentPhone = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+                startActivity(intentPhone);
                 break;
             case R.id.tv_msg://信息记录
+                phoneNumber = "18353123125";
                 Uri uri = Uri.parse("smsto://"+phoneNumber);
                 Intent msgIntent = new Intent(Intent.ACTION_SENDTO, uri);
                 startActivity(msgIntent);
@@ -149,7 +159,9 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
                 startActivityForResult(cameraIntent, CAPTURE_IMAGE_REQUEST_CODE);
                 break;
             case R.id.tv_search:
-                // TODO: 15/11/20 搜索蓝牙或者Wifi 
+                // TODO: 15/11/20 搜索蓝牙或者Wifi
+                Intent scanIntent = new Intent(this, DeviceScanActivity.class);
+                startActivity(scanIntent);
                 break;
         }
     }

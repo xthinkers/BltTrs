@@ -401,6 +401,7 @@ public class DeviceScanActivity extends Activity {
                     bundle.putString(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
                     intent.putExtras(bundle);
                     startActivity(intent);
+                    finish();
                     break;
                 case BltTsConstants.CONNECT_FAILED:
 //                    ToastUtils.showShort(DeviceScanActivity.this, "连接失败");

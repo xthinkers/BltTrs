@@ -43,5 +43,8 @@
     <string name="name_not_null">名称不能为空</string>
     <string name="title_activity_owner_info">OwnerInfoActivity</string>
     <string name="title_owner_info">业主信息</string>
+    <string name="title_activity_input_pwd">InputPwdActivity</string>
+    <string name="message_pwd">密码:</string>
+    <string name="pwd_is_empty">请输入密码</string>
 
 </resources>

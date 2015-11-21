@@ -5,8 +5,8 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.server"
-        minSdkVersion 16
+        applicationId "com.callphone"
+        minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
