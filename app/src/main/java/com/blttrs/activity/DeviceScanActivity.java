@@ -329,10 +329,14 @@ public class DeviceScanActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(!isEnable){
-                    return;
+                if(listview_device.isEnabled()){
+                    listview_device.setEnabled(false);
+                    return ;
                 }
-                isEnable = false;
+//                if(!isEnable){
+//                    return;
+//                }
+//                isEnable = false;
 
                 // TODO: 15/11/11
                 mDevice = mDeviceListAdapter.getDevice(position);
@@ -386,12 +390,14 @@ public class DeviceScanActivity extends Activity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            isEnable = true;
+            listview_device.setEnabled(true);
+//            isEnable = true;
 
             int what = msg.what;
             if(progressDialog.isShowing()){
                 progressDialog.cancel();
             }
+
             switch(what){
                 case BltTsConstants.CONNECT_SUCCESS:
 //                    ToastUtils.showShort(DeviceScanActivity.this, "连接成功");
