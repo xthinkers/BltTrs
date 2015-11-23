@@ -22,8 +22,7 @@
         android:layout_marginLeft="10dp"
         android:ellipsize="end"
         android:textSize="18sp"
-        android:textColor="@color/color_common_white"
-        />
+        android:textColor="@color/color_common_white" />
 
     <TextView
         android:id="@+id/tv_right"
@@ -32,7 +31,6 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:layout_marginRight="10dp"
-        android:text="设置"
-        />
+        android:text="设置" />
 
-</>
+</RelativeLayout>

@@ -70,5 +70,6 @@ public class InputPwdActivity extends AppCompatActivity implements View.OnClickL
      */
     private void openLock(String pwd) {
         // TODO: 15/11/21 开锁的逻辑
+
     }
 }
