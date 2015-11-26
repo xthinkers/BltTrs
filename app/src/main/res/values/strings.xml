@@ -46,5 +46,6 @@
     <string name="title_activity_input_pwd">InputPwdActivity</string>
     <string name="message_pwd">密码:</string>
     <string name="pwd_is_empty">请输入密码</string>
+    <string name="owner_list">业主列表信息</string>
 
 </resources>

@@ -14,5 +14,11 @@
     <dimen name="activity_login_imagebutton_top_bottom">10dp</dimen>
     <dimen name="activity_login_imagebutton_left">10dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="common_padding_5">5dp</dimen>
+    <dimen name="common_padding_10">10dp</dimen>
+
+    <dimen name="common_textsize_16">16sp</dimen>
+    <dimen name="common_textsize_18">18sp</dimen>
+    <dimen name="common_textsize_30">30sp</dimen>
 
 </resources>

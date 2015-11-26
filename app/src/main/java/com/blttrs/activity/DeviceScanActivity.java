@@ -17,17 +17,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blttrs.BltTsConstants;
 import com.blttrs.R;
@@ -36,7 +33,6 @@ import com.blttrs.broadcast.GattUpdateReceiver;
 import com.blttrs.service.BluetoothLeService;
 import com.blttrs.utils.ToastUtils;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,9 +40,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import me.drakeet.materialdialog.MaterialDialog;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
  * scan the device and list the device to the device list
@@ -86,11 +82,13 @@ public class DeviceScanActivity extends Activity {
     private TimerTask mTask3;
     private Timer mTimer3;
 
-    private Handler mConnectResult = new Handler(){
+    private MaterialProgressBar mProgressBar;
+
+    private Handler mConnectResult = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Log.i(TAG, " connected reuslt : " +  msg.what + "");
-            switch (msg.what){
+            Log.i(TAG, " connected reuslt : " + msg.what + "");
+            switch (msg.what) {
                 case 1:
                     String str = mDevice.getName();
                     if (str == null) {
@@ -113,7 +111,7 @@ public class DeviceScanActivity extends Activity {
                     if (isBTConnected) {
 //					devicename.setText("重连成功");
                         startActivity(intent);
-                    }else {
+                    } else {
 //						devicename.setText("重连失败，请点击重试");
                     }
                     break;
@@ -174,8 +172,8 @@ public class DeviceScanActivity extends Activity {
         mBluetoothDevices.clear();
         mDeviceListAdapter = new DeviceListAdapter(DeviceScanActivity.this, mBluetoothDevices);
         Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();
-        if(bondedDevices.size() > 0){
-            for (BluetoothDevice device : bondedDevices){
+        if (bondedDevices.size() > 0) {
+            for (BluetoothDevice device : bondedDevices) {
                 mBluetoothDevices.add(device);
             }
         }
@@ -223,6 +221,7 @@ public class DeviceScanActivity extends Activity {
 
     /**
      * 扫描周围设备
+     *
      * @param enabled 是否扫描
      */
     private void scanDevice(boolean enabled) {
@@ -239,12 +238,13 @@ public class DeviceScanActivity extends Activity {
                         }
 //                		invalidateOptionsMenu();
                         btn_scan.setText("Scan");
-                        if (progressDialog.isShowing()) {
-                            progressDialog.cancel();
-                            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
-                        }
+//                        if (progressDialog.isShowing()) {
+//                            progressDialog.cancel();
+//                            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
+//                        }
+                        mProgressBar.setVisibility(View.INVISIBLE);
 
-                        if(mBluetoothDevices.size() == 0){
+                        if (mBluetoothDevices.size() == 0) {
                             ToastUtils.showLong(DeviceScanActivity.this, R.string.scan_data_empty);
                         }
                     }
@@ -252,30 +252,23 @@ public class DeviceScanActivity extends Activity {
             }, SCAN_PERIOD);
             btn_scan.setText("Scaning");
             mScanning = true;
-            if(mBluetoothAdapter.isDiscovering()){
+            if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
             }
             mBluetoothAdapter.startDiscovery();
-
-            if(progressDialog == null){
-                progressDialog = new ProgressDialog(DeviceScanActivity.this);
-                progressDialog.setMessage("正在搜索...");
-            }
-            progressDialog.show();
+            mProgressBar.setVisibility(View.VISIBLE);
             btn_scan.setBackgroundResource(R.mipmap.btn_pre);
 
             Log.i(TAG, " scanLeDevice ");
-        } else {
+        } else
             btn_scan.setText("Scan");
             mScanning = false;
 //            mBluetoothAdapter.stopLeScan(mScanCallback);
-            if(mBluetoothAdapter.isDiscovering()){
+            if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
             }
-            if(progressDialog != null && progressDialog.isShowing()){
-                progressDialog.cancel();
-                btn_scan.setBackgroundResource(R.mipmap.btn_lock);
-            }
+            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
+            mProgressBar.setVisibility(View.INVISIBLE);
         }
 //        invalidateOptionsMenu();
 //        buttonScan.setText("Stop");
@@ -287,11 +280,11 @@ public class DeviceScanActivity extends Activity {
         scanDevice(false);
         mDeviceListAdapter.clear();
         //取消注册广播
-        if(mGattUpdateReceiver != null){
+        if (mGattUpdateReceiver != null) {
             unregisterReceiver(mGattUpdateReceiver);
         }
         //取消绑定服务
-        if(mServiceConnection != null){
+        if (mServiceConnection != null) {
             unbindService(mServiceConnection);
         }
     }
@@ -314,6 +307,7 @@ public class DeviceScanActivity extends Activity {
 
     private void initView() {
         btn_scan = ((Button) findViewById(R.id.btn_scan));
+        mProgressBar = ((MaterialProgressBar) findViewById(R.id.pb_scan));
         listview_device = ((ListView) findViewById(R.id.listview_device));
         btn_scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -329,14 +323,10 @@ public class DeviceScanActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                if(listview_device.isEnabled()){
-                    listview_device.setEnabled(false);
-                    return ;
+                if (!listview_device.isEnabled()) {
+                    return;
                 }
-//                if(!isEnable){
-//                    return;
-//                }
-//                isEnable = false;
+                Log.i(TAG, " the listview's status is : " + listview_device.isEnabled());
 
                 // TODO: 15/11/11
                 mDevice = mDeviceListAdapter.getDevice(position);
@@ -366,8 +356,9 @@ public class DeviceScanActivity extends Activity {
                     }
                 } else {
                     connect(mDevice);
+                    listview_device.setEnabled(false);
+                    Log.i(TAG, " set the listview enabled is false ...");
                 }
-
 //                result.postDelayed(new ConnectThread(mDevice, mBluetoothAdapter), 1000);
 //                mBluetoothLeService.connect(mDeviceAddress);
             }
@@ -377,35 +368,28 @@ public class DeviceScanActivity extends Activity {
         listview_device.setEmptyView(textView);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(progressDialog!=null && progressDialog.isShowing()){
-            progressDialog.cancel();
-        }
-    }
-
-    private Handler mResultHandler = new Handler(){
+    private Handler mResultHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
             listview_device.setEnabled(true);
+            Log.i(TAG, " set the listview's enabled true ");
 //            isEnable = true;
 
             int what = msg.what;
-            if(progressDialog.isShowing()){
+            if (progressDialog.isShowing()) {
                 progressDialog.cancel();
             }
 
-            switch(what){
+            switch (what) {
                 case BltTsConstants.CONNECT_SUCCESS:
 //                    ToastUtils.showShort(DeviceScanActivity.this, "连接成功");
-                    intent = new Intent(DeviceScanActivity.this, OwnerInfoActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
-                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
-                    intent.putExtras(bundle);
+                    intent = new Intent(DeviceScanActivity.this, OwnerListActivity.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_NAME, mDevice.getName());
+//                    bundle.putString(BltTsConstants.EXTRAS_DEVICE_ADDRESS, mDevice.getAddress());
+//                    intent.putExtras(bundle);
                     startActivity(intent);
                     finish();
                     break;
@@ -418,12 +402,12 @@ public class DeviceScanActivity extends Activity {
     };
 
     private void connect(BluetoothDevice device) {
-        if(progressDialog == null){
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
         }
         progressDialog.setMessage("正在连接");
         progressDialog.show();
-        new ConnectThread(device, mBluetoothAdapter,mResultHandler).start();
+        new ConnectThread(device, mBluetoothAdapter, mResultHandler).start();
     }
 
     // Device scan callback.
@@ -441,8 +425,8 @@ public class DeviceScanActivity extends Activity {
                 }
             };
 
-    private void showDialog(final BluetoothDevice dev){
-        if(mAlertDialog == null){
+    private void showDialog(final BluetoothDevice dev) {
+        if (mAlertDialog == null) {
             mAlertDialog = new AlertDialog.Builder(this);
             mAlertDialog.setTitle(R.string.message_dialog);
             mAlertDialog.setMessage(R.string.reconnect);

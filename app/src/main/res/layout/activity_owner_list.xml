@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.blttrs.widget.HeaderView
+        android:id="@+id/hv_ownerlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:headtitle="@string/owner_list"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <GridView
+            android:id="@+id/gv_owner_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:gravity="center"
+            android:horizontalSpacing="@dimen/activity_frame_corners_redius"
+            android:verticalSpacing="@dimen/activity_frame_corners_redius"
+            android:padding="@dimen/activity_horizontal_margin"/>
+    </FrameLayout>
+
+</LinearLayout>

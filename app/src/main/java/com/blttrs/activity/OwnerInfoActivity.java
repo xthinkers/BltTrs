@@ -87,7 +87,8 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
     private void initView() {
 
         mHearder = ((HeaderView) findViewById(R.id.header_ownerinfo));
-        mHearder.setVisibility(HeaderView.HeadCompat.BACK, false);
+        mHearder.setActivity(this);
+//        mHearder.setVisibility(HeaderView.HeadCompat.BACK, false);
 
         mImgAvatar = ((ImageView) findViewById(R.id.img_avatar));
 
@@ -162,6 +163,7 @@ public class OwnerInfoActivity extends AppCompatActivity implements View.OnClick
                 // TODO: 15/11/20 搜索蓝牙或者Wifi
                 Intent scanIntent = new Intent(this, DeviceScanActivity.class);
                 startActivity(scanIntent);
+                finish();
                 break;
         }
     }
