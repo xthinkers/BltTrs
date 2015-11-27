@@ -236,14 +236,8 @@ public class DeviceScanActivity extends Activity {
                         if (mBluetoothAdapter.isDiscovering()) {
                             mBluetoothAdapter.cancelDiscovery();
                         }
-//                		invalidateOptionsMenu();
                         btn_scan.setText("Scan");
-//                        if (progressDialog.isShowing()) {
-//                            progressDialog.cancel();
-//                            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
-//                        }
                         mProgressBar.setVisibility(View.INVISIBLE);
-
                         if (mBluetoothDevices.size() == 0) {
                             ToastUtils.showLong(DeviceScanActivity.this, R.string.scan_data_empty);
                         }
@@ -260,7 +254,7 @@ public class DeviceScanActivity extends Activity {
             btn_scan.setBackgroundResource(R.mipmap.btn_pre);
 
             Log.i(TAG, " scanLeDevice ");
-        } else
+        } else {
             btn_scan.setText("Scan");
             mScanning = false;
 //            mBluetoothAdapter.stopLeScan(mScanCallback);

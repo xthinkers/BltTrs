@@ -1,17 +1,16 @@
 package com.blttrs.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.blttrs.R;
-import com.blttrs.adapter.CommonListAdapter;
+import com.blttrs.adapter.CommonListViewAdapter;
+import com.blttrs.adapter.ViewHolder;
 import com.blttrs.widget.HeaderView;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class OwnerListActivity extends AppCompatActivity implements AdapterView.
 
     private HeaderView mHeaderView;
     private List<String> mOwnerList = new ArrayList<String>();
-    private CommonListAdapter mOwnerListAdapter;
+    private CommonListViewAdapter mOwnerListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +49,10 @@ public class OwnerListActivity extends AppCompatActivity implements AdapterView.
 
     private void setAdapter(List<String> mOwnerList) {
         if(mOwnerListAdapter == null){
-            mOwnerListAdapter = new CommonListAdapter(this, R.layout.layout_owner_item, mOwnerList) {
-
-                OwnerHolder viewHolder;
-                String  id;
+            mOwnerListAdapter = new CommonListViewAdapter(this, R.layout.layout_owner_item, mOwnerList) {
                 @Override
-                public Holder initView(View container) {
-                    viewHolder = new OwnerHolder();
-                    viewHolder.mId = ((TextView) container.findViewById(R.id.tv_id));
-                    return viewHolder;
-                }
-
-                @Override
-                public void initData(int position, Holder holder, Object obj) {
-                    id = (String) obj;
-                    viewHolder = (OwnerHolder) holder;
-                    viewHolder.mId.setText(id);
+                public void convert(ViewHolder viewHolder, Object item, int position) {
+                    viewHolder.setText(R.id.tv_id, (String)item);
                 }
             };
             mGvOwnerList.setAdapter(mOwnerListAdapter);
@@ -79,9 +66,5 @@ public class OwnerListActivity extends AppCompatActivity implements AdapterView.
         String idStr = mOwnerList.get(position);
         Intent intent = new Intent(this, OwnerInfoActivity.class);
         startActivity(intent);
-    }
-
-    static class OwnerHolder extends CommonListAdapter.Holder{
-        TextView mId;
     }
 }
