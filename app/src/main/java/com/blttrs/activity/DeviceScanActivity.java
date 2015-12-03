@@ -45,7 +45,10 @@ import me.drakeet.materialdialog.MaterialDialog;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
+ *
  * scan the device and list the device to the device list
+ * 访客端APK 供访客使用
+ *
  */
 public class DeviceScanActivity extends Activity {
 

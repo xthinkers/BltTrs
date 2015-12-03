@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:header="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.owner.widget.HeaderView
+        android:id="@+id/hv_owner_info_input"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        header:headtitle="@string/title_activity_owner_info_input"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="用户名:"
+            android:textSize="18sp"
+            android:gravity="right|center_vertical"
+            android:textColor="@android:color/black"/>
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:hint="输入用户名"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="密码:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_pwd"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:hint="请输入密码"
+            android:background="@drawable/shape_rectangle_bg" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36sp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="可绑定电话1:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_phone1"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:hint="请输入电话号码"
+            android:inputType="phone"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="可绑定电话2:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_phone2"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:hint="请输入电话号码"
+            android:inputType="phone"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="可绑定电话3:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_phone3"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:hint="请输入电话号码"
+            android:inputType="phone"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="出入开始时间:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_start"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:inputType="phone"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:text="出入结束时间:"
+            android:gravity="right|center_vertical"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"/>
+
+        <EditText
+            android:id="@+id/et_end"
+            android:layout_width="200dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:inputType="phone"
+            android:background="@drawable/shape_rectangle_bg" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="保存"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
+        android:background="@android:color/holo_blue_light"
+        />
+
+
+
+</LinearLayout>
