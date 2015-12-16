@@ -36,15 +36,20 @@ public class OwnerListActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_owner_list);
 
+        initView();
+
+    }
+
+    private void initView() {
         mGvOwnerList = ((GridView) findViewById(R.id.gv_owner_list));
         mHeaderView = ((HeaderView) findViewById(R.id.hv_ownerlist));
         mHeaderView.setVisibility(HeaderView.HeadCompat.BACK, false);
         mGvOwnerList.setOnItemClickListener(this);
-
         for(int i = 0; i < 30; i++){
             mOwnerList.add(100+(i+1)+"");
         }
         setAdapter(mOwnerList);
+
     }
 
     private void setAdapter(List<String> mOwnerList) {

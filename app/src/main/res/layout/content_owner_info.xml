@@ -37,7 +37,7 @@
             android:gravity="center"
             android:textSize="18dp"
             android:textColor="#99000000"
-            android:background="@drawable/face_happy"/>
+            />
 
         <TextView
             android:id="@+id/tv_search"
@@ -61,14 +61,12 @@
             android:id="@+id/tv_msg"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:background="@drawable/text_message"
             android:layout_margin="10dp"/>
 
         <TextView
             android:id="@+id/tv_record"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:background="@drawable/call_records"
             android:layout_margin="10dp"/>
 
         <TextView
@@ -76,7 +74,7 @@
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_margin="10dp"
-            android:background="@drawable/camera"/>
+            />
 
     </LinearLayout>
 
@@ -101,8 +99,7 @@
             <ImageView
                 android:id="@+id/img_contacts_one"
                 android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:background="@drawable/phone"/>
+                android:layout_height="72dp" />
             <TextView
                 android:id="@+id/tv_phone1"
                 android:layout_width="match_parent"
@@ -120,8 +117,7 @@
             <ImageView
                 android:id="@+id/img_contacts_two"
                 android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:background="@drawable/phone"/>
+                android:layout_height="72dp" />
             <TextView
                 android:id="@+id/tv_phone2"
                 android:layout_width="match_parent"
@@ -141,7 +137,7 @@
                 android:id="@+id/img_contacts_three"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
-                android:background="@drawable/phone"/>
+                />
             <TextView
                 android:id="@+id/tv_phone3"
                 android:layout_width="match_parent"

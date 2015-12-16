@@ -1,5 +1,7 @@
 package com.owner;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,10 +17,20 @@ import android.view.MenuItem;
  */
 public class MainActivity extends AppCompatActivity {
 
+    SharedPreferences sharedPreferences ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
 
+        sharedPreferences = getSharedPreferences("ownerinfo", MODE_PRIVATE);
+        boolean isEdited = sharedPreferences.getBoolean("isEdited", false);
+
+        Intent intent = new Intent();
+        intent.setClass(this, isEdited ? GuestListActivity.class : OwnerInfoInputActivity.class);
+        startActivity(intent);
+        finish();
+
+        setContentView(R.layout.content_main);
     }
 }

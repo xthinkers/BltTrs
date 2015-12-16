@@ -16,12 +16,11 @@ import com.blttrs.widget.HeaderView;
 
 public class InputPwdActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private HeaderView mHeaderView;
+    private HeaderView mHeaderView;//公用标题栏
     private TextView mTvContacts;//联系人
     private TextView mTvStatus;//提示信息
     private EditText mEdtPwd;//密码
     private TextView mTvLock;//开门按钮
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

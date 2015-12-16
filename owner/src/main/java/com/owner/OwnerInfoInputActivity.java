@@ -1,5 +1,7 @@
 package com.owner;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 import com.owner.utils.ToastUtils;
 import com.owner.widget.HeaderView;
 
+import org.w3c.dom.Text;
+
 /**
  * 业主信息填写页面
  */
@@ -23,9 +27,13 @@ public class OwnerInfoInputActivity extends AppCompatActivity implements View.On
     private EditText mEtUserName, mEtPwd, mEtPhone1, mEtPhone2, mEtPhone3, mEtStart, mEtEnd;
     private TextView mTvSubmit;
 
+    private SharedPreferences mSharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mSharedPreferences = getSharedPreferences("ownerinfo", MODE_PRIVATE);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -74,13 +82,33 @@ public class OwnerInfoInputActivity extends AppCompatActivity implements View.On
         String end = mEtEnd.getText().toString().trim();
         if(TextUtils.isEmpty(userName)){
             ToastUtils.showShort(this, "请输入用户名");
-        }else if(TextUtils.isEmpty(pwd)){
+            return;
+        }
+        if(TextUtils.isEmpty(pwd)){
             ToastUtils.showShort(this, "请输入密码");
-        }else if(TextUtils.isEmpty(phone1) && TextUtils.isEmpty(phone2) && TextUtils.isEmpty(phone3)){
+            return;
+        }
+        if(TextUtils.isEmpty(phone1) && TextUtils.isEmpty(phone2) && TextUtils.isEmpty(phone3)){
             ToastUtils.showShort(this, "请至少输入一个绑定手机号码");
+            return;
         }
 
-        // TODO: 15/12/2 自行保存信息动作
+        // TODO: 15/12/2 保存信息动作
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putString("username", userName);
+        editor.putString("pwd", pwd);
+        editor.putString("phone1", phone1);
+        if(!TextUtils.isEmpty(phone2)){
+            editor.putString("phone2", phone2);
+        }
+        if(!TextUtils.isEmpty(phone3)){
+            editor.putString("phone3", phone3);
+        }
+        editor.putBoolean("isEdited", true);
+        editor.commit();
 
+        Intent intent = new Intent(this, GuestListActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

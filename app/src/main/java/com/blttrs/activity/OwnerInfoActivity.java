@@ -23,8 +23,10 @@ import com.blttrs.widget.HeaderView;
 
 import java.io.File;
 
+/**
+ * 业主信息列表
+ */
 public class OwnerInfoActivity extends AppCompatActivity implements View.OnClickListener {
-
 
     private static final String TAG = "OwnerInfoActivity";
 

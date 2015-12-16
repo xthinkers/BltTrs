@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:padding="@dimen/common_padding_5"
-        android:background="@drawable/selector_bg_owner_item"
         android:textSize="@dimen/common_textsize_30"
         android:textColor="@android:color/holo_orange_dark"/>
 

@@ -8,6 +8,6 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_set_name"
-    tools:context="com.blttrs.activity.dialog.SetNameActivity">
+    tools:context="com.blttrs.activity.chat.SetNameActivity">
 
 </RelativeLayout>

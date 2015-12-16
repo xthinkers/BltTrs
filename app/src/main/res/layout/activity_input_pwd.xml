@@ -36,8 +36,7 @@
             android:layout_height="32dp"
             android:layout_below="@+id/img_avatar_small"
             android:background="@drawable/avatar_small"
-            android:layout_marginLeft="32dp"
-            />
+            android:layout_marginLeft="32dp" />
 
         <TextView
             android:id="@+id/tv_alias"
@@ -68,8 +67,7 @@
         android:orientation="horizontal"
         android:layout_below="@+id/tv_status_connect"
         android:background="@color/color_common_white"
-        android:layout_margin="10dp"
-        >
+        android:layout_margin="10dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,7 +84,8 @@
             android:layout_height="64dp"
             android:hint="输入密码"
             android:textSize="20dp"
-            android:textColor="@color/color_orange"
+            android:inputType="numberPassword"
+            android:textColor="@android:color/black"
             android:background="@null"
             android:layout_marginLeft="10dp"
             android:textColorHint="@color/color_common_gray" />
@@ -101,7 +100,6 @@
         android:text="开门"
         android:textColor="@android:color/black"
         android:textSize="40sp"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/circle_normal"/>
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

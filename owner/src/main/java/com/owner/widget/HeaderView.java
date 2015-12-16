@@ -32,6 +32,16 @@ public class HeaderView extends LinearLayout implements View.OnClickListener {
 
     private Activity mActivity;
 
+    public OnClickCallBack onClickLisenter;
+
+    public OnClickCallBack getOnClickCallBackLisenter() {
+        return onClickLisenter;
+    }
+
+    public void setOnClickCallBackLisenter(OnClickCallBack onClickLisenter) {
+        this.onClickLisenter = onClickLisenter;
+    }
+
     public void setActivity(Activity mActivity){
         this.mActivity = mActivity;
     }
@@ -123,6 +133,21 @@ public class HeaderView extends LinearLayout implements View.OnClickListener {
         return mTitle.getText().toString().trim();
     }
 
+    public void setClilckListener(HeadCompat compat){
+        switch (compat){
+            case RIGHT:
+                mRight.setOnClickListener(this);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public interface OnClickCallBack{
+        void onClickCallBack(HeadCompat headCompat);
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -131,6 +156,9 @@ public class HeaderView extends LinearLayout implements View.OnClickListener {
                 if(mActivity != null){
                     mActivity.finish();
                 }
+                break;
+            case R.id.tv_right:
+                onClickLisenter.onClickCallBack(HeadCompat.RIGHT);
                 break;
         }
     }

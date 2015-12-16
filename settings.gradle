@@ -1,1 +1,1 @@
-include ':app', ':owner'
+include ':app', ':owner', ':easemob'

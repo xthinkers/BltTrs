@@ -86,6 +86,8 @@ public class DeviceScanActivity extends Activity {
     private Timer mTimer3;
 
     private MaterialProgressBar mProgressBar;
+    private ConnectThread mConnectThread;
+    private TextView mTvOwnerList;
 
     private Handler mConnectResult = new Handler() {
         @Override
@@ -254,7 +256,7 @@ public class DeviceScanActivity extends Activity {
             }
             mBluetoothAdapter.startDiscovery();
             mProgressBar.setVisibility(View.VISIBLE);
-            btn_scan.setBackgroundResource(R.mipmap.btn_pre);
+            btn_scan.setBackgroundResource(R.mipmap.ic_launcher);
 
             Log.i(TAG, " scanLeDevice ");
         } else {
@@ -264,7 +266,7 @@ public class DeviceScanActivity extends Activity {
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
             }
-            btn_scan.setBackgroundResource(R.mipmap.btn_lock);
+            btn_scan.setBackgroundResource(R.mipmap.ic_launcher);
             mProgressBar.setVisibility(View.INVISIBLE);
         }
 //        invalidateOptionsMenu();
@@ -304,6 +306,18 @@ public class DeviceScanActivity extends Activity {
 
     private void initView() {
         btn_scan = ((Button) findViewById(R.id.btn_scan));
+        mTvOwnerList = ((TextView) findViewById(R.id.tv_ownerlist));
+        mTvOwnerList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mScanning) {
+                    scanDevice(false);
+                }
+                Intent intent = new Intent();
+                intent.setClass(DeviceScanActivity.this, OwnerListActivity.class);
+                startActivity(intent);
+            }
+        });
         mProgressBar = ((MaterialProgressBar) findViewById(R.id.pb_scan));
         listview_device = ((ListView) findViewById(R.id.listview_device));
         btn_scan.setOnClickListener(new View.OnClickListener() {
@@ -321,6 +335,11 @@ public class DeviceScanActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (!listview_device.isEnabled()) {
+                    return;
+                }
+
+                if(mConnectThread != null && mConnectThread.isConnectting()){
+                    Log.i(TAG, " connectThread is running ");
                     return;
                 }
                 Log.i(TAG, " the listview's status is : " + listview_device.isEnabled());
@@ -404,7 +423,9 @@ public class DeviceScanActivity extends Activity {
         }
         progressDialog.setMessage("正在连接");
         progressDialog.show();
-        new ConnectThread(device, mBluetoothAdapter, mResultHandler).start();
+
+        mConnectThread = new ConnectThread(device, mBluetoothAdapter, mResultHandler);
+        mConnectThread.start();
     }
 
     // Device scan callback.

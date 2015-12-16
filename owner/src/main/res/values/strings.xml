@@ -3,4 +3,10 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_owner_setting">设置</string>
     <string name="title_activity_owner_info_input">业主信息</string>
+    <string name="title_activity_guest_list">访客列表</string>
+    <string name="set_pwd">App密码设定</string>
+    <string name="set_door_gate_pwd">门区密码设定</string>
+    <string name="set_sys">系统设定</string>
+    <string name="set_anti_pwd">反胁迫秘密设定</string>
+
 </resources>

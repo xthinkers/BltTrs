@@ -1,5 +1,8 @@
 package com.owner.utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * Created by hongweiyu on 15/11/11.
  */
@@ -26,4 +29,8 @@ public class SysUtils {
         }
         return sb.toString();
     }
+
+
+
+
 }

@@ -38,7 +38,6 @@
         android:id="@+id/edt_setname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn"
         android:padding="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/color_text_1" />
@@ -61,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:background="@drawable/selector_btn"
             android:text="确认"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/color_text_2"
@@ -72,7 +70,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
-            android:background="@drawable/selector_btn"
             android:text="取消"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/color_text_2"

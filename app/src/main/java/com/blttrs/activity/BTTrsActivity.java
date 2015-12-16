@@ -1,6 +1,5 @@
 package com.blttrs.activity;
 
-import android.app.Dialog;
 import android.bluetooth.BluetoothSocket;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -17,8 +16,6 @@ import android.widget.ToggleButton;
 
 import com.blttrs.BltTsConstants;
 import com.blttrs.R;
-import com.blttrs.activity.dialog.SetNameActivity;
-import com.blttrs.activity.dialog.SetPwdActivity;
 import com.blttrs.service.BluetoothLeService;
 
 public class BTTrsActivity extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
@@ -103,12 +100,12 @@ public class BTTrsActivity extends AppCompatActivity implements View.OnClickList
                 boolean check_on = button_on.isChecked();
                 break;
             case R.id.btn_set_pwd:
-                startActivity(new Intent(this, SetPwdActivity.class));
+//                startActivity(new Intent(this, SetPwdActivity.class));
                 break;
             case R.id.btn_set_new_pwd:
                 break;
             case R.id.btn_change_name:
-                startActivity(new Intent(this, SetNameActivity.class));
+//                startActivity(new Intent(this, SetNameActivity.class));
                 break;
         }
     }

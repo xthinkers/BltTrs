@@ -23,12 +23,22 @@ public class ConnectThread extends Thread {
 
     private static final String TAG = "ConnectThread";
 
+    private static ConnectThread mConnectThread;
+
     private final BluetoothDevice mDevice;
     private final BluetoothSocket mSocket;
     private BluetoothAdapter mAdapter;
     private static final String SPP_UUID = "0000111f-0000-1000-8000-00805f9b34fb";
-    private boolean isConnect = false;
+    private boolean isConnectting = false;
+
     private Handler mHandler;
+
+//    public ConnectedThread getInstance(BluetoothDevice device, BluetoothAdapter adapter, Handler handler){
+//        if(mConnectThread == null){
+//            mConnectThread = new ConnectThread(device, adapter, handler);
+//            return mConnectThread;
+//        }
+//    }
 
     public ConnectThread(BluetoothDevice device, BluetoothAdapter adapter,Handler handler) {
         this.mDevice = device;
@@ -44,18 +54,26 @@ public class ConnectThread extends Thread {
         mSocket = tmp;
     }
 
+    public boolean isConnectting() {
+        return isConnectting;
+    }
+
+    public void setIsConnectting(boolean isConnectting) {
+        this.isConnectting = isConnectting;
+    }
+
     public void run() {
         if (mAdapter.isDiscovering()) {
             mAdapter.cancelDiscovery();
         }
         try {
             mSocket.connect();
-            isConnect = true;
+            isConnectting = true;
             mHandler.obtainMessage(BltTsConstants.CONNECT_SUCCESS).sendToTarget();
         } catch (Exception e) {
             e.printStackTrace();
             cancel();
-            isConnect = false;
+            isConnectting = false;
             mHandler.obtainMessage(BltTsConstants.CONNECT_FAILED).sendToTarget();
             return;
         }
