@@ -268,9 +268,6 @@ public class DeviceScanActivity extends Activity {
             }
             btn_scan.setBackgroundResource(R.mipmap.ic_launcher);
             mProgressBar.setVisibility(View.INVISIBLE);
-        }
-//        invalidateOptionsMenu();
-//        buttonScan.setText("Stop");
     }
 
     @Override
