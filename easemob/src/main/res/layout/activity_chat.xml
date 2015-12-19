@@ -350,7 +350,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="@string/attach_video"
+                            android:text="@string/attach_call"
                             android:textColor="#727171" />
                     </LinearLayout>
                 </LinearLayout>
@@ -388,7 +388,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="@string/attach_file"
+                            android:text="@string/attach_message"
                             android:textColor="#727171" />
                     </LinearLayout>
 

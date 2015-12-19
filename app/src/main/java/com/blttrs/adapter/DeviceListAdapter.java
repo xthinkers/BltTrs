@@ -27,8 +27,8 @@ public class DeviceListAdapter extends BaseAdapter {
     public DeviceListAdapter(Context context, List<BluetoothDevice> deviceList){
         mInflator = LayoutInflater.from(context);
         this.deviceList = deviceList;
-        rssis = new ArrayList<>();
-        bRecord = new ArrayList<>();
+        rssis = new ArrayList<Integer>();
+        bRecord = new ArrayList<byte[]>();
     }
 
     public void setBondStatus(BluetoothDevice dev,int status){

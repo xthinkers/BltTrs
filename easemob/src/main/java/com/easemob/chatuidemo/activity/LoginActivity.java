@@ -13,10 +13,12 @@
  */
 package com.easemob.chatuidemo.activity;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -101,6 +103,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		sp = getSharedPreferences("registerinfo", MODE_PRIVATE);
+
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(this, "1104948033", "QmwhqXG3NAdpJEuv");
 		qqSsoHandler.addToSocialSDK();
 
@@ -108,7 +112,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		if (DemoHXSDKHelper.getInstance().isLogined()) {
 			autoLogin = true;
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
-
 			return;
 		}
 		setContentView(R.layout.activity_login);
@@ -163,88 +166,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			Toast.makeText(this, R.string.Password_cannot_be_empty, Toast.LENGTH_SHORT).show();
 			return;
 		}
-
-		progressShow = true;
-		final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
-		pd.setCanceledOnTouchOutside(false);
-		pd.setOnCancelListener(new OnCancelListener() {
-
-			@Override
-			public void onCancel(DialogInterface dialog) {
-				progressShow = false;
-			}
-		});
-		pd.setMessage(getString(R.string.Is_landing));
-		pd.show();
-
-		final long start = System.currentTimeMillis();
-		// 调用sdk登陆方法登陆聊天服务器
-		EMChatManager.getInstance().login(currentUsername, currentPassword, new EMCallBack() {
-
-			@Override
-			public void onSuccess() {
-				if (!progressShow) {
-					return;
-				}
-				// 登陆成功，保存用户名密码
-				DemoApplication.getInstance().setUserName(currentUsername);
-				DemoApplication.getInstance().setPassword(currentPassword);
-
-				try {
-					// ** 第一次登录或者之前logout后再登录，加载所有本地群和回话
-					// ** manually load all local groups and
-					EMGroupManager.getInstance().loadAllGroups();
-					EMChatManager.getInstance().loadAllConversations();
-					// 处理好友和群组
-					initializeContacts();
-				} catch (Exception e) {
-					e.printStackTrace();
-					// 取好友或者群聊失败，不让进入主页面
-					runOnUiThread(new Runnable() {
-						public void run() {
-							pd.dismiss();
-							DemoHXSDKHelper.getInstance().logout(true, null);
-							Toast.makeText(getApplicationContext(), R.string.login_failure_failed,
-									Toast.LENGTH_SHORT).show();
-						}
-					});
-					return;
-				}
-				// 更新当前用户的nickname 此方法的作用是在ios离线推送时能够显示用户nick
-				boolean updatenick = EMChatManager.getInstance().updateCurrentUserNick(
-						DemoApplication.currentUserNick.trim());
-				if (!updatenick) {
-					Log.e("LoginActivity", "update current user nick fail");
-				}
-				if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
-					pd.dismiss();
-				}
-				// 进入主页面
-				Intent intent = new Intent(LoginActivity.this,
-						MainActivity.class);
-				startActivity(intent);
-
-				finish();
-			}
-
-			@Override
-			public void onProgress(int progress, String status) {
-			}
-
-			@Override
-			public void onError(final int code, final String message) {
-				if (!progressShow) {
-					return;
-				}
-				runOnUiThread(new Runnable() {
-					public void run() {
-						pd.dismiss();
-						Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
-								Toast.LENGTH_SHORT).show();
-					}
-				});
-			}
-		});
+		thridLogin(currentUsername, currentPassword);
 	}
 
 	public void thirdLogin(String screenName, String passwrod){
@@ -380,6 +302,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		if (autoLogin) {
 			return;
 		}
+		String username = DemoApplication.getInstance().getUserName();
+		usernameEditText.setText(username);
 	}
 
 	@Override
@@ -403,7 +327,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(
 				requestCode);
 		if (ssoHandler != null) {
-			Tencent.handleResultData(data, new LoginIUiListener());
+//			Tencent.handleResultData(data, new LoginIUiListener());
 			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 			Log.i("TAG", "#### ssoHandler.authorizeCallBack");
 		}
@@ -448,6 +372,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 			public void onStart() {
 
 			}
+
 			@Override
 			public void onComplete(int status, Map<String, Object> info) {
 				// String showText = "";
@@ -458,59 +383,131 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 				// showText = "获取用户信息失败";
 				// }
 
-				String nickName = "861574834";
-				String password = "yu2008271400";
-				if(info.containsKey("screen_name")){
+				String nickName = (String) info.get("screen_name");
+				final long number = new Random().nextInt(1000000) + 600000000;
+				if (info.containsKey("screen_name")) {
 					nickName = (String) info.get("screen_name");
 				}
 
-				Log.i("TAG", info.toString());
-
-				//登陆
-
-				thirdLogin(nickName, password);
-				if (info != null) {
-					Toast.makeText(LoginActivity.this, info.toString(), Toast.LENGTH_LONG).show();
+				String username = DemoApplication.getInstance().getUserName();
+				if (TextUtils.isEmpty(username)) {
+					Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putLong("usernumber", number);
+					intent.putExtras(bundle);
+					startActivityForResult(intent, 0);
+				} else {
+					final String name = DemoApplication.getInstance().getUserName();
+					final String password = DemoApplication.getInstance().getPassword();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							thridLogin(name, password);
+						}
+					});
 				}
+//				if (info != null) {
+//					Toast.makeText(LoginActivity.this, info.toString(), Toast.LENGTH_LONG).show();
+//				}
 			}
 		});
 	}
 
-
-	class LoginIUiListener implements IUiListener {
-
-		@Override
-		public void onError(UiError arg0) {
-			// TODO Auto-generated method stub
-
+	private void thridLogin(final String usernumber, final String password){
+		if (!CommonUtils.isNetWorkConnected(this)) {
+			Toast.makeText(this, R.string.network_isnot_available, Toast.LENGTH_SHORT).show();
+			return;
 		}
 
-		/**
-		 * 返回json数据样例
-		 *
-		 * {"ret":0,"pay_token":"D3D678728DC580FBCDE15722B72E7365",
-		 * "pf":"desktop_m_qq-10000144-android-2002-",
-		 * "query_authority_cost":448,
-		 * "authority_cost":-136792089,
-		 * "openid":"015A22DED93BD15E0E6B0DDB3E59DE2D",
-		 * "expires_in":7776000,
-		 * "pfkey":"6068ea1c4a716d4141bca0ddb3df1bb9",
-		 * "msg":"",
-		 * "access_token":"A2455F491478233529D0106D2CE6EB45",
-		 * "login_cost":499}
-		 */
-		@Override
-		public void onComplete(Object value) {
-			// TODO Auto-generated method stub
-
-//			Toast.makeText(LoginActivity.this, value.toString(), Toast.LENGTH_SHORT).show();
-			Log.i("TAG", value.toString());
+		if (TextUtils.isEmpty(usernumber)) {
+			Toast.makeText(this, R.string.User_name_cannot_be_empty, Toast.LENGTH_SHORT).show();
+			return;
+		}
+		if (TextUtils.isEmpty(password)) {
+			Toast.makeText(this, R.string.Password_cannot_be_empty, Toast.LENGTH_SHORT).show();
+			return;
 		}
 
-		@Override
-		public void onCancel() {
-			// TODO Auto-generated method stub
+		progressShow = true;
+		final ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+		pd.setCanceledOnTouchOutside(false);
+		pd.setOnCancelListener(new OnCancelListener() {
 
-		}
+			@Override
+			public void onCancel(DialogInterface dialog) {
+				progressShow = false;
+			}
+		});
+		pd.setMessage(getString(R.string.Is_landing));
+		pd.show();
+
+		final long start = System.currentTimeMillis();
+		// 调用sdk登陆方法登陆聊天服务器
+		EMChatManager.getInstance().login(usernumber, password, new EMCallBack() {
+
+			@Override
+			public void onSuccess() {
+				if (!progressShow) {
+					return;
+				}
+				// 登陆成功，保存用户名密码
+				DemoApplication.getInstance().setUserName(usernumber);
+				DemoApplication.getInstance().setPassword(password);
+
+				try {
+					// ** 第一次登录或者之前logout后再登录，加载所有本地群和回话
+					// ** manually load all local groups and
+					EMGroupManager.getInstance().loadAllGroups();
+					EMChatManager.getInstance().loadAllConversations();
+					// 处理好友和群组
+					initializeContacts();
+				} catch (Exception e) {
+					e.printStackTrace();
+					// 取好友或者群聊失败，不让进入主页面
+					runOnUiThread(new Runnable() {
+						public void run() {
+							pd.dismiss();
+							DemoHXSDKHelper.getInstance().logout(true, null);
+							Toast.makeText(getApplicationContext(), R.string.login_failure_failed,
+									Toast.LENGTH_SHORT).show();
+						}
+					});
+					return;
+				}
+				// 更新当前用户的nickname 此方法的作用是在ios离线推送时能够显示用户nick
+				boolean updatenick = EMChatManager.getInstance().updateCurrentUserNick(
+						DemoApplication.currentUserNick.trim());
+				if (!updatenick) {
+					Log.e("LoginActivity", "update current user nick fail");
+				}
+				if (!LoginActivity.this.isFinishing() && pd.isShowing()) {
+					pd.dismiss();
+				}
+				// 进入主页面
+				Intent intent = new Intent(LoginActivity.this,
+						MainActivity.class);
+				startActivity(intent);
+
+				finish();
+			}
+
+			@Override
+			public void onProgress(int progress, String status) {
+			}
+
+			@Override
+			public void onError(final int code, final String message) {
+				if (!progressShow) {
+					return;
+				}
+				runOnUiThread(new Runnable() {
+					public void run() {
+						pd.dismiss();
+						Toast.makeText(getApplicationContext(), getString(R.string.Login_failed) + message,
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		});
 	}
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">环信DEMO</string>
+    <string name="app_name">DEMO</string>
     <string name="text_ack_msg">已读</string>
     <string name="text_delivered_msg">送达</string>
     <string name="back">返回</string>
@@ -13,7 +13,9 @@
     <string name="attach_take_pic">拍照</string>
     <string name="attach_location">位置</string>
     <string name="attach_video">视频</string>
+    <string name="attach_call">电话</string>
     <string name="attach_file">文件</string>
+    <string name="attach_message">信息</string>
     <string name="attach_voice_call">语音电话</string>
     <string name="attach_video_call">视频通话</string>
     <string name="user_card">名片</string>

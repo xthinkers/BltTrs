@@ -14,6 +14,7 @@
 package com.easemob.chatuidemo.activity;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -34,14 +35,23 @@ public class RegisterActivity extends BaseActivity {
 	private EditText userNameEditText;
 	private EditText passwordEditText;
 	private EditText confirmPwdEditText;
+	private SharedPreferences sharedPreferences;
+
+	private long usernumber ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
+		sharedPreferences = getSharedPreferences("registerinfo", MODE_PRIVATE);
 		userNameEditText = (EditText) findViewById(R.id.username);
 		passwordEditText = (EditText) findViewById(R.id.password);
 		confirmPwdEditText = (EditText) findViewById(R.id.confirm_password);
+		Bundle bundle = getIntent().getExtras();
+		if(bundle!=null && bundle.containsKey("usernumber")){
+			usernumber = bundle.getLong("usernumber");
+			userNameEditText.setText(usernumber+"");
+		}
 	}
 
 	/**
@@ -85,7 +95,8 @@ public class RegisterActivity extends BaseActivity {
 									pd.dismiss();
 								// 保存用户名
 								DemoApplication.getInstance().setUserName(username);
-								Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), 0).show();
+								DemoApplication.getInstance().setPassword(pwd);
+								Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
 								finish();
 							}
 						});

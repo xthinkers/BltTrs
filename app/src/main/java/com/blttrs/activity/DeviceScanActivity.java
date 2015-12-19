@@ -173,7 +173,7 @@ public class DeviceScanActivity extends Activity {
         initView();
 
         // Initializes list view adapter.
-        mBluetoothDevices = new ArrayList<>();
+        mBluetoothDevices = new ArrayList<BluetoothDevice>();
         mBluetoothDevices.clear();
         mDeviceListAdapter = new DeviceListAdapter(DeviceScanActivity.this, mBluetoothDevices);
         Set<BluetoothDevice> bondedDevices = mBluetoothAdapter.getBondedDevices();

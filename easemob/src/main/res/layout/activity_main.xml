@@ -79,26 +79,26 @@
                 android:visibility="visible" />
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/btn_container_setting"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" >
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/btn_container_setting"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1" >-->
 
-            <Button
-                android:id="@+id/btn_setting"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/main_bottom_item_bg"
-                android:drawableTop="@drawable/tab_setting_bg"
-                android:onClick="onTabClicked"
-                android:paddingBottom="2dip"
-                android:paddingTop="7dip"
-                android:scaleType="matrix"
-                android:text="@string/setting"
-                android:textColor="@color/main_botton_text_color"
-                android:textSize="12sp" />
-        </RelativeLayout>
+            <!--<Button-->
+                <!--android:id="@+id/btn_setting"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@drawable/main_bottom_item_bg"-->
+                <!--android:drawableTop="@drawable/tab_setting_bg"-->
+                <!--android:onClick="onTabClicked"-->
+                <!--android:paddingBottom="2dip"-->
+                <!--android:paddingTop="7dip"-->
+                <!--android:scaleType="matrix"-->
+                <!--android:text="@string/setting"-->
+                <!--android:textColor="@color/main_botton_text_color"-->
+                <!--android:textSize="12sp" />-->
+        <!--</RelativeLayout>-->
     </LinearLayout>
 
     <RelativeLayout
