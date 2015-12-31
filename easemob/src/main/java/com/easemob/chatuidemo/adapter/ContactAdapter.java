@@ -40,7 +40,6 @@ import com.easemob.util.EMLog;
 
 /**
  * 简单的好友Adapter实现
- *
  */
 public class ContactAdapter extends ArrayAdapter<User>  implements SectionIndexer{
     private static final String TAG = "ContactAdapter";

@@ -11,6 +11,15 @@
         android:background="@color/top_bar_normal_bg"
         android:gravity="center_vertical" >
 
+        <!--Back button-->
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/margin_chat_activity"
+            android:src="@drawable/back"/>
+
         <TextView
             android:id="@+id/message_title"
             android:layout_width="wrap_content"
@@ -60,8 +69,8 @@
                     android:layout_marginLeft="6dp"
                     android:text="@string/now_refresh_list" />
             </LinearLayout>
-            
-            <include 
+
+            <include
                 android:id="@+id/search_bar_view"
                 layout="@layout/search_bar_with_padding"/>
 
@@ -77,14 +86,14 @@
                 android:divider="@color/divider_list"
                 android:dividerHeight="1px"
                 android:fastScrollEnabled="false" />
- 			<com.easemob.chatuidemo.widget.Sidebar
+            <com.easemob.chatuidemo.widget.Sidebar
                 android:id="@+id/sidebar"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"
                 android:clickable="true" />
- 			
+
             <TextView
                 android:id="@+id/floating_header"
                 android:layout_width="wrap_content"
@@ -107,17 +116,17 @@
             android:layout_gravity="center"
             android:visibility="gone"
             android:id="@+id/progress_bar">
-	        <ProgressBar
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_gravity="center_horizontal"/>
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/now_refresh_list"
                 android:layout_gravity="center_horizontal"/>
-	    </LinearLayout>
-        
+        </LinearLayout>
+
     </FrameLayout>
 
 </LinearLayout>

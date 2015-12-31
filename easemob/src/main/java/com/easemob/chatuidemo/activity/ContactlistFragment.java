@@ -65,7 +65,6 @@ import com.easemob.util.EMLog;
 
 /**
  * 联系人列表页
- * 
  */
 public class ContactlistFragment extends Fragment {
 	public static final String TAG = "ContactlistFragment";
@@ -101,7 +100,7 @@ public class ContactlistFragment extends Fragment {
                                 refresh();
 		                    }else{
 		                        String s1 = getResources().getString(R.string.get_failed_please_check);
-		                        Toast.makeText(getActivity(), s1, 1).show();
+		                        Toast.makeText(getActivity(), s1, Toast.LENGTH_SHORT).show();
 		                        progressBar.setVisibility(View.GONE);
 		                    }
 		                }
@@ -126,11 +125,9 @@ public class ContactlistFragment extends Fragment {
                 
             });
         }
-	    
 	};
 	
 	class HXContactInfoSyncListener implements HXSyncListener{
-
 		@Override
 		public void onSyncSucess(final boolean success) {
 			EMLog.d(TAG, "on contactinfo list sync success:" + success);
@@ -349,7 +346,8 @@ public class ContactlistFragment extends Fragment {
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(getActivity(), st2 + e.getMessage(), 1).show();
+							Toast.makeText(getActivity(), st2 + e.getMessage(),
+									Toast.LENGTH_SHORT).show();
 						}
 					});
 
@@ -379,7 +377,7 @@ public class ContactlistFragment extends Fragment {
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(getActivity(), st2, 0).show();
+							Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
 							refresh();
 						}
 					});
@@ -388,7 +386,7 @@ public class ContactlistFragment extends Fragment {
 					getActivity().runOnUiThread(new Runnable() {
 						public void run() {
 							pd.dismiss();
-							Toast.makeText(getActivity(), st3, 0).show();
+							Toast.makeText(getActivity(), st3, Toast.LENGTH_SHORT).show();
 						}
 					});
 				}
@@ -456,6 +454,7 @@ public class ContactlistFragment extends Fragment {
 					&& !blackList.contains(entry.getKey()))
 				contactList.add(entry.getValue());
 		}
+
 		// 排序
 		Collections.sort(contactList, new Comparator<User>() {
 
@@ -477,8 +476,8 @@ public class ContactlistFragment extends Fragment {
 //            contactList.add(0, users.get(Constant.GROUP_USERNAME));
 //
 //		// 把"申请与通知"添加到首位
-//		if(users.get(Constant.NEW_FRIENDS_USERNAME) != null)
-//		    contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));
+		if(users.get(Constant.NEW_FRIENDS_USERNAME) != null)
+		    contactList.add(0, users.get(Constant.NEW_FRIENDS_USERNAME));
 		
 	}
 	

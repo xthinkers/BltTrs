@@ -24,6 +24,18 @@ import com.umeng.analytics.MobclickAgent;
 
 public class BaseActivity extends FragmentActivity {
 
+    // 账号在别处登录
+    public boolean isConflict = false;
+    // 账号被移除
+    public boolean isCurrentAccountRemoved = false;
+
+    /**
+     * 检查当前用户是否被删除
+     */
+    public boolean getCurrentAccountRemoved() {
+        return isCurrentAccountRemoved;
+    }
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);

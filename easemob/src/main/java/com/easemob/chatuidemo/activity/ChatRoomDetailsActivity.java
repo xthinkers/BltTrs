@@ -233,8 +233,6 @@ public class ChatRoomDetailsActivity extends BaseActivity implements OnClickList
 
 	/**
 	 * 退出群组
-	 * 
-	 * @param groupId
 	 */
 	private void exitGrop() {
 		new Thread(new Runnable() {
@@ -254,7 +252,8 @@ public class ChatRoomDetailsActivity extends BaseActivity implements OnClickList
 					runOnUiThread(new Runnable() {
 						public void run() {
 							progressDialog.dismiss();
-							Toast.makeText(getApplicationContext(), "退出聊天室失败: " + e.getMessage(), 1).show();
+							Toast.makeText(getApplicationContext(), "退出聊天室失败: " + e.getMessage(),
+									Toast.LENGTH_SHORT).show();
 						}
 					});
 				}

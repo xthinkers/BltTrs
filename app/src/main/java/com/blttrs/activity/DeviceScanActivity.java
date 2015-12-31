@@ -45,10 +45,8 @@ import me.drakeet.materialdialog.MaterialDialog;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 /**
- *
  * scan the device and list the device to the device list
  * 访客端APK 供访客使用
- *
  */
 public class DeviceScanActivity extends Activity {
 
@@ -262,15 +260,14 @@ public class DeviceScanActivity extends Activity {
         } else {
             btn_scan.setText("Scan");
             mScanning = false;
-//            mBluetoothAdapter.stopLeScan(mScanCallback);
             if (mBluetoothAdapter.isDiscovering()) {
                 mBluetoothAdapter.cancelDiscovery();
             }
             btn_scan.setBackgroundResource(R.mipmap.ic_launcher);
             mProgressBar.setVisibility(View.INVISIBLE);
+        }
     }
 
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         scanDevice(false);
@@ -335,7 +332,7 @@ public class DeviceScanActivity extends Activity {
                     return;
                 }
 
-                if(mConnectThread != null && mConnectThread.isConnectting()){
+                if (mConnectThread != null && mConnectThread.isConnectting()) {
                     Log.i(TAG, " connectThread is running ");
                     return;
                 }

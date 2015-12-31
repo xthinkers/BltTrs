@@ -15,9 +15,15 @@ package com.easemob.chatuidemo;
 
 import android.app.Application;
 import android.content.Context;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.easemob.EMCallBack;
+import com.easemob.EMError;
+import com.easemob.R;
 import com.easemob.chat.EMChatManager;
+import com.easemob.exceptions.EaseMobException;
 
 public class DemoApplication extends Application {
 
@@ -57,6 +63,10 @@ public class DemoApplication extends Application {
          * }
          */
         hxSDKHelper.onInit(applicationContext);
+
+		//自动注册
+
+
 	}
 
 	public static DemoApplication getInstance() {
@@ -104,6 +114,6 @@ public class DemoApplication extends Application {
 	 */
 	public void logout(final boolean isGCM,final EMCallBack emCallBack) {
 		// 先调用sdk logout，在清理app中自己的数据
-	    hxSDKHelper.logout(isGCM,emCallBack);
+	    hxSDKHelper.logout(isGCM, emCallBack);
 	}
 }

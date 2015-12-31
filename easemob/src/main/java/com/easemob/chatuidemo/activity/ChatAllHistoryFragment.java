@@ -6,8 +6,11 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -29,23 +32,27 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.easemob.applib.controller.HXSDKHelper;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMConversation;
 import com.easemob.chat.EMConversation.EMConversationType;
 import com.easemob.chatuidemo.Constant;
 import com.easemob.chatuidemo.DemoApplication;
 import com.easemob.R;
+import com.easemob.chatuidemo.DemoHXSDKHelper;
 import com.easemob.chatuidemo.adapter.ChatAllHistoryAdapter;
 import com.easemob.chatuidemo.db.InviteMessgeDao;
+import com.easemob.chatuidemo.domain.User;
+import com.easemob.chatuidemo.utils.ToastUtils;
 
 /**
  * 显示所有会话记录，比较简单的实现，更好的可能是把陌生人存入本地，这样取到的聊天记录是可控的
- * 
  */
 public class ChatAllHistoryFragment extends Fragment implements OnClickListener {
 
@@ -59,10 +66,35 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 	public TextView errorText;
 	private boolean hidden;
 	private List<EMConversation> conversationList = new ArrayList<EMConversation>();
-		
+	private RelativeLayout mRlNewFriends;
+	private TextView mTvUnReadMsgNum;
+
+	//Scan the Bluetooth Device
+	private ImageView mImgContacts;
+	private TextView mTvScan;
+	private TextView mTvName;//名称
+	private TextView mTvSigned;//备注
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_conversation_history, container, false);
+		View root = inflater.inflate(R.layout.fragment_conversation_history, container, false);
+
+		initView(root);
+
+		return root;
+	}
+
+	private void initView(View view) {
+		mTvScan = ((TextView) view.findViewById(R.id.tv_scan_device));
+		mImgContacts = ((ImageView) view.findViewById(R.id.img_contacts));
+		mRlNewFriends = ((RelativeLayout) view.findViewById(R.id.rl_new_friends));
+		mTvUnReadMsgNum = ((TextView) view.findViewById(R.id.unread_msg_number));
+		mTvName = ((TextView) view.findViewById(R.id.name));
+		mTvSigned = ((TextView) view.findViewById(R.id.signature));
+
+		mTvScan.setOnClickListener(this);
+		mImgContacts.setOnClickListener(this);
+		mRlNewFriends.setOnClickListener(this);
 	}
 
 	@Override
@@ -79,8 +111,7 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 		adapter = new ChatAllHistoryAdapter(getActivity(), 1, conversationList);
 		// 设置adapter
 		listView.setAdapter(adapter);
-				
-		
+
 		final String st2 = getResources().getString(R.string.Cant_chat_with_yourself);
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -89,7 +120,7 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 				EMConversation conversation = adapter.getItem(position);
 				String username = conversation.getUserName();
 				if (username.equals(DemoApplication.getInstance().getUserName()))
-					Toast.makeText(getActivity(), st2, 0).show();
+					Toast.makeText(getActivity(), st2, Toast.LENGTH_SHORT).show();
 				else {
 				    // 进入聊天页面
 				    Intent intent = new Intent(getActivity(), ChatActivity.class);
@@ -191,9 +222,6 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 		adapter.remove(tobeDeleteCons);
 		adapter.notifyDataSetChanged();
 
-		// 更新消息未读数
-		((MainActivity) getActivity()).updateUnreadLabel();
-		
 		return handled ? true : super.onContextItemSelected(item);
 	}
 
@@ -205,14 +233,17 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 		conversationList.addAll(loadConversationsWithRecentChat());
 		if(adapter != null)
 		    adapter.notifyDataSetChanged();
+
+		User user = ((DemoHXSDKHelper) HXSDKHelper.getInstance()).getContactList().get(Constant.NEW_FRIENDS_USERNAME);
+		int unReadMsgCount = user.getUnreadMsgCount();
+		mTvUnReadMsgNum.setVisibility(unReadMsgCount > 0 ? View.VISIBLE : View.INVISIBLE);
+
 	}
 
 	/**
 	 * 获取所有会话
-	 * 
-	 * @param context
 	 * @return
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        +	 */
+	 * */
 	private List<EMConversation> loadConversationsWithRecentChat() {
 		// 获取所有会话，包括陌生人
 		Hashtable<String, EMConversation> conversations = EMChatManager.getInstance().getAllConversations();
@@ -248,8 +279,6 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
 
 	/**
 	 * 根据最后一条消息的时间排序
-	 * 
-	 * @param usernames
 	 */
 	private void sortConversationByLastChatTime(List<Pair<Long, EMConversation>> conversationList) {
 		Collections.sort(conversationList, new Comparator<Pair<Long, EMConversation>>() {
@@ -296,6 +325,45 @@ public class ChatAllHistoryFragment extends Fragment implements OnClickListener 
     }
 
     @Override
-    public void onClick(View v) {        
+    public void onClick(View v) {
+		int id = v.getId();
+		switch (id){
+			case R.id.tv_scan_device:
+				// TODO: 15/12/23 scan the device
+				//charge the device whether support the ble 4.0
+				// Use this check to determine whether BLE is supported on the device.  Then you can
+				// selectively disable BLE-related features.
+				if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+					ToastUtils.showShort(getActivity(), R.string.ble_not_supported);
+					return;
+				}
+
+				final BluetoothManager bluetoothManager =
+						(BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
+				BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
+
+				// Checks if Bluetooth is supported on the device.
+				if (mBluetoothAdapter == null) {
+					ToastUtils.showShort(getActivity(), R.string.error_bluetooth_not_supported);
+					return;
+				}
+				startActivity(new Intent(getActivity(), DeviceScanActivity.class));
+				break;
+			case R.id.img_contacts:
+				// TODO: 15/12/24 查看联系人 添加联系人
+				startActivity(new Intent(getActivity(), ContactsActivity.class));
+				break;
+			case R.id.rl_new_friends:
+				User user = ((DemoHXSDKHelper) HXSDKHelper.getInstance()).getContactList().get(Constant.NEW_FRIENDS_USERNAME);
+				user.setUnreadMsgCount(0);
+//				startActivity(new Intent(getActivity(), NewFriendsMsgActivity.class));
+				Intent intent = new Intent();
+				intent.putExtra("userId", "123456");
+				intent.setClass(getActivity(), ChatActivity.class);
+				startActivity(intent);
+				break;
+			default:
+				break;
+		}
     }
 }

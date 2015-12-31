@@ -406,9 +406,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 						}
 					});
 				}
-//				if (info != null) {
-//					Toast.makeText(LoginActivity.this, info.toString(), Toast.LENGTH_LONG).show();
-//				}
 			}
 		});
 	}

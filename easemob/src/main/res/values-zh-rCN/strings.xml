@@ -4,6 +4,7 @@
     <string name="app_name">DEMO</string>
     <string name="text_ack_msg">已读</string>
     <string name="text_delivered_msg">送达</string>
+    <string name="scan_device">扫描</string>
     <string name="back">返回</string>
     <string name="save">保存</string>
     <string name="button_pushtotalk">按住说话</string>
@@ -76,6 +77,8 @@
     <string name="book_black">通讯录黑名单</string>
     <string name="session">会话</string>
     <string name="address_book">通讯录</string>
+    <string name="device_scan">设备扫描</string>
+    <string name="device_control">蓝牙操作</string>
     <string name="setting">设置</string>
     <string name="now_refresh_list">正在刷新联系人</string>
     <string name="Application_and_notify">申请与通知</string>
